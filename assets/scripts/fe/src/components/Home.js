@@ -38,9 +38,18 @@ export default Home = () => {
     Keyboard.dismiss();
   }
 
+  const updateTask = (selected) => {
+    axios
+      .post(`/todo/item/${selected.id}/`, {is_completed: true})
+      .then(response => {
+      })
+      .catch(error => console.log(error));
+    Keyboard.dismiss();
+  }
+
   const deleteTask = (selected) => {
     axios
-      .get(`/todo/item/${selected.id}`)
+      .get(`/todo/item/${selected.id}/`)
       .then(response => {
         setTasks(tasks.filter((task, index) => task.id != selected.id));
       })
@@ -48,9 +57,7 @@ export default Home = () => {
     Keyboard.dismiss();
   }
 
-  handleRequest = () => {
-    // This request will only succeed if the Authorization header
-    // contains the API token
+  const handleRequest = () => {
     axios
       .post('/user/logout/')
       .then(response => {
@@ -61,13 +68,18 @@ export default Home = () => {
 
   return (
     <View style={styles.buttonContainerStyle}>
-      <Button title="Logout" onPress={this.handleRequest.bind(this)}/>
+      <Button title="Logout" onPress={() => handleRequest()}/>
       <Text style={styles.heading}>TODO LIST</Text>
       <ScrollView style={styles.scrollView}>
         {tasks.map((task, index) => {
           return (
             <View key={index} style={styles.taskContainer}>
-              <TodoItem index={index + 1} task={task.title} deleteTask={() => deleteTask(task)}/>
+              <TodoItem
+                index={index + 1}
+                task={task.title}
+                deleteTask={() => deleteTask(task)}
+                updateTask={() => updateTask(task)}
+              />
             </View>
           );
         })}
